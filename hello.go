@@ -38,4 +38,40 @@ func main() {
 	height := 1.68
 	fmt.Println("O tipo da variável é:", reflect.TypeOf(quantity))
 	fmt.Println("O tipo da variável é:", reflect.TypeOf(height))
+
+	/*
+		Capturando input do terminal
+	*/
+
+	simpleName := "Douglas"
+	systemVersion := 1.1
+
+	fmt.Println("Olá Sr.", simpleName)
+	fmt.Println("A versão do sistema é:", systemVersion)
+
+	fmt.Println("1 - Iniciar Monitoramento")
+	fmt.Println("2 - Exibir Logs")
+	fmt.Println("0 - Sair")
+
+	var inputCommand int
+	/*
+		O "&" indica o endereço da variável na qual está atrelado.
+		Neste caso, está indicando o endereço de memória da variável
+		"inputCommand" para que o valor inserido no terminal seja atribuído
+		à variável.
+		A função "Scanf" espera como primeiro argumento, a especificação
+		do tipo do input para a variável
+	*/
+	// fmt.Scanf("%d", &inputCommand)
+
+	/*
+		Na função "Scan" não necessita especificar o tipo de input.
+		Caso seja informado um input diferente do tipo da variável,
+		neste caso "inputCommand", este valor não será interpretado
+		e a variável irá assumir seu valor padrão, no caso de int será 0
+	*/
+	fmt.Scan(&inputCommand)
+
+	fmt.Println("O comando escolhido foi:", inputCommand)
+	fmt.Println("O endereço da minha variável inputCommand é:", &inputCommand)
 }
