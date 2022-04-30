@@ -82,10 +82,21 @@ func main() {
 	if inputCommand == 1 {
 		fmt.Println("Exibindo logs...")
 	} else if inputCommand == 2 {
-		fmt.Println("Monitorando...")
+		fmt.Println("IF/ELSE> Monitorando...")
 	} else if inputCommand == 0 {
-		fmt.Println("Saindo do programa...")
+		fmt.Println("IF/ELSE> Saindo do programa...")
 	} else {
-		fmt.Println("Não conheço este comando!")
+		fmt.Println("IF/ELSE> Não conheço este comando!")
+	}
+
+	switch inputCommand {
+	case 1:
+		fmt.Println("SWITCH> Exibindo logs...")
+	case 2:
+		fmt.Println("SWITCH> Monitorando...")
+	case 0:
+		fmt.Println("SWITCH> Saindo do programa...")
+	default:
+		fmt.Println("SWITCH> Não conheço este comando!")
 	}
 }
