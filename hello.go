@@ -74,4 +74,18 @@ func main() {
 
 	fmt.Println("O comando escolhido foi:", inputCommand)
 	fmt.Println("O endereço da minha variável inputCommand é:", &inputCommand)
+
+	/**
+	No IF é obrigatório a utilização de uma expressão na qual retorne um boolean
+	Não é possível validar tipos diferentes de boolean na expressão
+	*/
+	if inputCommand == 1 {
+		fmt.Println("Exibindo logs...")
+	} else if inputCommand == 2 {
+		fmt.Println("Monitorando...")
+	} else if inputCommand == 0 {
+		fmt.Println("Saindo do programa...")
+	} else {
+		fmt.Println("Não conheço este comando!")
+	}
 }
