@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -148,11 +151,13 @@ func readCommand() int {
 
 func initializeMonitoring() {
 
-	sites := []string{
-		"https://random-status-code.herokuapp.com",
-		"https://www.alura.com.br",
-		"https://www.caelum.com.br",
-	}
+	// sites := []string{
+	// 	"https://random-status-code.herokuapp.com",
+	// 	"https://www.alura.com.br",
+	// 	"https://www.caelum.com.br",
+	// }
+
+	sites := getSitesFromFile()
 
 	for i := 0; i < monitoringTimes; i++ {
 		for index, site := range sites {
@@ -175,7 +180,13 @@ func requestMonitoring(site string) (string, *http.Response) {
 		os valores utilizando o operador underline (_)
 	*/
 	var message string
-	response, _ := http.Get(site)
+	response, err := http.Get(site)
+
+	if err != nil {
+		message = fmt.Sprintf("Ocorreu um erro http no site (%s). Erro: %s", site, err)
+		return message, nil
+	}
+
 	if response.StatusCode == 200 {
 		message = fmt.Sprintf("Site: %s foi carregado com sucesso!!", site)
 	} else {
@@ -183,4 +194,42 @@ func requestMonitoring(site string) (string, *http.Response) {
 	}
 
 	return message, response
+}
+
+func getSitesFromFile() []string {
+	var sites []string
+	/*
+		A função (os.Open) retorna apenas o ponteiro
+		para o endereço de memória do arquivo
+	*/
+	file, err := os.Open("sites.txt")
+
+	if err != nil {
+		fmt.Println("Ocorreu um erro ao tentar ler arquivo:", err)
+		os.Exit(-1)
+		return nil
+	}
+
+	/*
+		A função (ioutil.ReadFile) realiza a leitura de arquivos
+		retornando um array de bytes. Para realizar a leitura
+		do arquivo em string basta utilizar a função (string())
+	*/
+	// file, err := ioutil.ReadFile("sites.txt")
+	// fmt.Println(string(file))
+	reader := bufio.NewReader(file)
+	for {
+		row, err := reader.ReadString('\n')
+		row = strings.TrimSpace(row)
+
+		sites = append(sites, row)
+
+		if err == io.EOF {
+			break
+		}
+	}
+
+	file.Close()
+
+	return sites
 }
