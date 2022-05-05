@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -120,7 +122,7 @@ func main() {
 	case 1:
 		initializeMonitoring()
 	case 2:
-		fmt.Println("Exibindo logs...")
+		printLogs()
 	case 0:
 		fmt.Println("Saindo do programa")
 		os.Exit(0)
@@ -164,6 +166,7 @@ func initializeMonitoring() {
 			message, _ := requestMonitoring(site)
 			fmt.Println(index+1, "-", message)
 		}
+		fmt.Println("")
 		time.Sleep(time.Duration(secondInterval) * time.Second)
 	}
 	// for i := 0; i < len(sites); i++ {
@@ -180,18 +183,25 @@ func requestMonitoring(site string) (string, *http.Response) {
 		os valores utilizando o operador underline (_)
 	*/
 	var message string
+	var isOnline bool
 	response, err := http.Get(site)
 
 	if err != nil {
 		message = fmt.Sprintf("Ocorreu um erro http no site (%s). Erro: %s", site, err)
+		isOnline = false
+		writeLogs(site, isOnline)
 		return message, nil
 	}
 
 	if response.StatusCode == 200 {
 		message = fmt.Sprintf("Site: %s foi carregado com sucesso!!", site)
+		isOnline = true
 	} else {
 		message = fmt.Sprintf("Site: %s está com problema. Status Code: %s", site, response.Status)
+		isOnline = false
 	}
+
+	writeLogs(site, isOnline)
 
 	return message, response
 }
@@ -232,4 +242,26 @@ func getSitesFromFile() []string {
 	file.Close()
 
 	return sites
+}
+
+func writeLogs(site string, isOnline bool) {
+	file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	file.WriteString(time.Now().Format("02/01/2006 15:04:05") + " | " + site + " | ONLINE:" + strconv.FormatBool(isOnline) + "\n")
+
+	file.Close()
+}
+
+func printLogs() {
+	file, err := ioutil.ReadFile("log.txt")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(file))
 }
